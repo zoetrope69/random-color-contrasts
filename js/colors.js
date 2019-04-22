@@ -8,7 +8,7 @@ const colorNamer = require('color-namer')
   https://botsin.space/@accessibleColors/101967888732908331
 
   for example in .env use:
-  COLOR_BLOCKLIST='["flesh"]
+  COLOR_BLOCKLIST='["flesh"]'
   
   this will skip this colour name and try another one
   
