@@ -3,6 +3,24 @@ const fetch = require('node-fetch')
 const contrast = require('get-contrast')
 const colorNamer = require('color-namer')
 
+/*
+  colors to block for various reasons, for example this one:
+  https://botsin.space/@accessibleColors/101967888732908331
+
+  for example in .env use:
+  COLOR_BLOCKLIST='["flesh"]
+  
+  this will skip this colour name and try another one
+  
+  we'll put in in .env just incase there are words you'd rather not read
+  in source code...
+*/
+const COLOR_BLOCKLIST = JSON.parse(process.env.COLOR_BLOCKLIST)
+
+function colorIsBlocked (str) {
+  return COLOR_BLOCKLIST.includes(str.toLowerCase())
+}
+
 function toTitleCase (str) {
   return str.replace(/\w\S*/g, (txt) => {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
@@ -30,11 +48,14 @@ function getClosestName (color) {
     possibleColors.push(names.ntc[0])
   }
   
-  if (possibleColors.length === 0) {
+  // filter out blocked colours
+  const possibleColorsWithBlockedColors = possibleColors.filter(color => !colorIsBlocked(color.name));
+  
+  if (possibleColorsWithBlockedColors.length === 0) {
     return null
   }
   
-  const sortedByDistancePossibleColors = possibleColors.sort((a, b) => {
+  const sortedByDistancePossibleColors = possibleColorsWithBlockedColors.sort((a, b) => {
     return a.distance > b.distance
   })
     
