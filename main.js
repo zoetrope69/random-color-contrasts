@@ -23,13 +23,11 @@ app.get('/' + process.env.BOT_ENDPOINT, (request, response) => {
       ``,
       `(Contrast ratio: ${data.ratio.toFixed(1)}:1 | ${data.score})`
     ].join('\n')
-    console.log(text)
     const imageDescription = `${colorOne.name} (${colorOne.hex}) and ${colorTwo.name} (${colorTwo.hex})`
     
-    return drawImage(imageFilePath, data)
-      .then(() => {
-        return sendImageToMastodon(imageFilePath, imageDescription, text)
-      })
+    return drawImage(imageFilePath, data).then(() => {
+      return sendImageToMastodon(imageFilePath, imageDescription, text)
+    })
   })
   .then(() => {
     return response.status(200).send(`<img src="${imageFileName}" />`)
