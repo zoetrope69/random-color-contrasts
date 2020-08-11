@@ -1,2 +1,3 @@
 node_modules
-js/images/output.png
+lib/images/output.png
+.env
