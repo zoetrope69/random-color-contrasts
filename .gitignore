@@ -1,3 +1,4 @@
 node_modules
-lib/images/output.png
+public/output.png
 .env
+.pki
