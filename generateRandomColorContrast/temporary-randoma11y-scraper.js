@@ -3,17 +3,20 @@ const puppeteer = require("puppeteer");
 async function scrapeRandomA11y() {
   let browser;
   try {
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    });
 
     const page = await browser.newPage();
     await page.goto("https://randoma11y.com");
 
     await page.waitForSelector("h3");
-    const colorHexValues = await page.$$eval("h3", (colorNameEl) =>
-      colorNameEl.map((el) => el.textContent)
+    const colorHexValues = await page.$$eval("h3", colorNameEl =>
+      colorNameEl.map(el => el.textContent)
     );
 
-    const hasCorrectishHexValues = colorHexValues.every((value) =>
+    const hasCorrectishHexValues = colorHexValues.every(value =>
       value.includes("#")
     );
 
@@ -35,5 +38,5 @@ async function scrapeRandomA11y() {
 }
 
 module.exports = {
-  scrapeRandomA11y,
+  scrapeRandomA11y
 };
