@@ -1,11 +1,11 @@
 const fs = require("fs");
-const Canvas = require("canvas");
+const { createCanvas } = require("canvas");
 
 function drawImage(filePath, colorData) {
   return new Promise((resolve, reject) => {
     const { colorOne, colorTwo } = colorData;
 
-    const canvas = new Canvas(460, 260);
+    const canvas = createCanvas(460, 260);
     const ctx = canvas.getContext("2d");
 
     ctx.antialias = "gray";
@@ -28,7 +28,7 @@ function drawImage(filePath, colorData) {
     drawBox(0, colorOne, colorTwo);
     drawBox(canvas.height / 2, colorTwo, colorOne);
 
-    fs.writeFile(filePath, canvas.toBuffer(), (err) => {
+    fs.writeFile(filePath, canvas.toBuffer(), err => {
       if (err) {
         return reject(err);
       }
@@ -39,5 +39,5 @@ function drawImage(filePath, colorData) {
 }
 
 module.exports = {
-  drawImage,
+  drawImage
 };

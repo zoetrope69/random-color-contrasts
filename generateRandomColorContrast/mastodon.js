@@ -10,11 +10,11 @@ const Mastodon = require("mastodon-api");
 const mastodonClient = new Mastodon({
   access_token: MASTODON_ACCESS_TOKEN,
   timeout_ms: 60 * 1000, // optional HTTP request timeout to apply to all requests.
-  api_url: MASTODON_API_URL,
+  api_url: MASTODON_API_URL
 });
 
 function sendImageToMastodon(imageFilePath, imageDescription, text) {
-  return uploadImage(imageFilePath, imageDescription).then((imageId) => {
+  return uploadImage(imageFilePath, imageDescription).then(imageId => {
     createStatus(imageId, text);
   });
 }
@@ -50,5 +50,5 @@ function uploadImage(filePath, description) {
 }
 
 module.exports = {
-  sendImageToMastodon,
+  sendImageToMastodon
 };

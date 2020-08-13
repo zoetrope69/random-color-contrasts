@@ -1,44 +1,29 @@
-const { drawImage } = require('./js/images')
-const { sendImageToMastodon } = require('./js/mastodon')
-const { getColorCombo } = require('./js/colors')
-const express = require('express')
-const app = express()
+const { CronJob } = require("cron");
+const express = require("express");
+const app = express();
 
-app.use(express.static('public'))
+const generateRandomColorContrast = require('./generateRandomColorContrast');
 
-app.get('/', (request, response) => {
-  response.sendStatus(200)
-})
-
-app.get('/' + process.env.BOT_ENDPOINT, (request, response) => {
-  const imageFileName = 'output.png'
-  const imageFilePath = `${__dirname}/public/${imageFileName}`
-
-  return getColorCombo().then(data => {
-    const { colorOne, colorTwo }  = data
-    
-    const text = [
-      `${colorOne.name} ${colorOne.hex}`,
-      `${colorTwo.name} ${colorTwo.hex}`,
-      ``,
-      `(Contrast ratio: ${data.ratio.toFixed(1)}:1 | ${data.score})`
-    ].join('\n')
-    const imageDescription = `${colorOne.name} (${colorOne.hex}) and ${colorTwo.name} (${colorTwo.hex})`
-    
-    return drawImage(imageFilePath, data).then(() => {
-      return sendImageToMastodon(imageFilePath, imageDescription, text)
-    })
+// trigger every:
+// 00:15, 04:15, 12:15, 16:15
+const job = new CronJob("15 0,4,12,16 * * *", () => {
+  console.log("Triggered cron job");
+  
+  console.log('Generating random color contrast...');
+  const imageFilePath = `${__dirname}/public/output.png`;
+  generateRandomColorContrast({ imageFilePath }).then(() => {
+    console.log('Generated random color contrast and sent to Mastodon!');
   })
-  .then(() => {
-    return response.status(200).send(`<img src="${imageFileName}" />`)
-  })
-  .catch(error => {
-    console.error('error:', error)
-    
-    return response.status(500).send(error)
-  })
-})
+}, null, false, 'Europe/London');
+job.start();
+
+// glitch requires a server...
+app.use(express.static("public"));
+
+app.get("/", (request, response) => {
+  response.sendStatus(200);
+});
 
 const listener = app.listen(process.env.PORT, () => {
-  console.log(`Your app is listening on port ${listener.address().port}`)
-})
+  console.log(`Your app is listening on port ${listener.address().port}`);
+});

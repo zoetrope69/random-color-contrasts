@@ -9,7 +9,7 @@ const { scrapeRandomA11y } = require("./temporary-randoma11y-scraper");
   for example in .env use:
   COLOR_BLOCKLIST='["flesh"]'
   
-  this will skip this colour name and try another one
+  this will skip this color name and try another one
   
   we'll put in in .env just incase there are words you'd rather not read
   in source code...
@@ -21,7 +21,7 @@ function colorIsBlocked(str) {
 }
 
 function toTitleCase(str) {
-  return str.replace(/\w\S*/g, (txt) => {
+  return str.replace(/\w\S*/g, txt => {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
   });
 }
@@ -35,10 +35,6 @@ function getClosestName(color) {
 
   const possibleColors = [];
 
-  if (names.roygbiv[0]) {
-    possibleColors.push(names.roygbiv[0]);
-  }
-
   if (names.pantone[0]) {
     possibleColors.push(names.pantone[0]);
   }
@@ -47,9 +43,13 @@ function getClosestName(color) {
     possibleColors.push(names.ntc[0]);
   }
 
-  // filter out blocked colours
+  if (names.roygbiv[0]) {
+    possibleColors.push(names.roygbiv[0]);
+  }
+
+  // filter out blocked colors
   const possibleColorsWithBlockedColors = possibleColors.filter(
-    (color) => !colorIsBlocked(color.name)
+    color => !colorIsBlocked(color.name)
   );
 
   if (possibleColorsWithBlockedColors.length === 0) {
@@ -57,35 +57,33 @@ function getClosestName(color) {
   }
 
   const sortedByDistancePossibleColors = possibleColorsWithBlockedColors.sort(
-    (a, b) => {
-      return a.distance > b.distance;
-    }
+    (a, b) => a.distance - b.distance
   );
 
-  const closestMatchedColor = sortedByDistancePossibleColors[0];
+  const [closestMatchedColor] = sortedByDistancePossibleColors;
 
   return toTitleCase(closestMatchedColor.name);
 }
 
 function getColorCombo() {
-  return scrapeRandomA11y().then((data) => {
+  return scrapeRandomA11y().then(data => {
     const { color_one, color_two } = data;
 
     return {
       colorOne: {
         hex: color_one.toUpperCase(),
-        name: getClosestName(color_one),
+        name: getClosestName(color_one)
       },
       colorTwo: {
         hex: color_two.toUpperCase(),
-        name: getClosestName(color_two),
+        name: getClosestName(color_two)
       },
       ratio: contrast.ratio(color_one, color_two),
-      score: contrast.score(color_one, color_two),
+      score: contrast.score(color_one, color_two)
     };
   });
 }
 
 module.exports = {
-  getColorCombo,
+  getColorCombo
 };
