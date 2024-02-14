@@ -1,6 +1,6 @@
 const contrast = require("get-contrast");
 const colorNamer = require("color-namer");
-const { scrapeRandomA11y } = require("./temporary-randoma11y-scraper");
+const randomColor = require("random-hex-color");
 
 /*
   colors to block for various reasons, for example this one:
@@ -24,6 +24,18 @@ function toTitleCase(str) {
   return str.replace(/\w\S*/g, txt => {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
   });
+}
+
+// stolen from https://github.com/components-ai/randoma11y
+function getColorPair(pinnedColor) {
+  const colorOne = pinnedColor || randomColor();
+  let colorTwo = randomColor();
+
+  while (!contrast.isAccessible(colorOne, colorTwo)) {
+    colorTwo = randomColor();
+  }
+
+  return { colorOne, colorTwo };
 }
 
 function getClosestName(color) {
@@ -65,25 +77,23 @@ function getClosestName(color) {
   return toTitleCase(closestMatchedColor.name);
 }
 
-function getColorCombo() {
-  return scrapeRandomA11y().then(data => {
-    const { color_one, color_two } = data;
+function getColors() {
+  const { colorOne, colorTwo } = getColorPair();
 
-    return {
-      colorOne: {
-        hex: color_one.toUpperCase(),
-        name: getClosestName(color_one)
-      },
-      colorTwo: {
-        hex: color_two.toUpperCase(),
-        name: getClosestName(color_two)
-      },
-      ratio: contrast.ratio(color_one, color_two),
-      score: contrast.score(color_one, color_two)
-    };
-  });
+  return {
+    colorOne: {
+      hex: colorOne.toUpperCase(),
+      name: getClosestName(colorOne)
+    },
+    colorTwo: {
+      hex: colorTwo.toUpperCase(),
+      name: getClosestName(colorTwo)
+    },
+    ratio: contrast.ratio(colorOne, colorTwo),
+    score: contrast.score(colorOne, colorTwo)
+  };
 }
 
 module.exports = {
-  getColorCombo
+  getColors
 };

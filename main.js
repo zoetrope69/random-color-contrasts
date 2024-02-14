@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const { CronJob } = require("cron");
 const express = require("express");
 const app = express();
@@ -20,7 +22,7 @@ job.start();
 // glitch requires a server...
 app.use(express.static("public"));
 
-app.get("/", (request, response) => {
+app.get("/", (_request, response) => {
   response.sendStatus(200);
 });
 
