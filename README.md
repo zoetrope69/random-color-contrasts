@@ -1,6 +1,8 @@
 # random color contrast bot
 
-⚫🌈⚪ A Mastodon bot that grabs colours contrast combos from: [randoma11y.com](https://randoma11y.com)
+⚫🌈⚪ A Mastodon bot that grabs colours contrast combos
+
+Inspired by and code stolen from: [randoma11y.com](https://randoma11y.com)
 
 ## How does the bot work?
 
